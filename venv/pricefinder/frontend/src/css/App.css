@@ -1,0 +1,176 @@
+#react-logo {
+  width: 50px;
+  height: auto;
+  position: fixed;
+  top: 2.5%;
+  left: 1%;
+}
+#django-logo {
+  width: 38.5px;
+  height: auto;
+  position: fixed;
+  top: 2.5%;
+  left: 5%;
+}
+#selenium-logo {
+  width: 38.5px;
+  height: auto;
+  position: fixed;
+  top: 10.5%;
+  left: 3.5%;
+}
+
+.top-left-container {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center; /* Vertically center the content */
+  width: 18%;
+  padding-top: 3%;
+  padding-left: 3%;
+  margin: 0 8.5%;
+}
+
+.search-container p,
+.top-left-container p {
+  font-size: 1.5em; /* Adjust font size */
+  color: #fff; /* Set color to white */
+  text-transform: uppercase; /* Convert text to uppercase */
+  letter-spacing: 1px; /* Add letter spacing for better readability */
+  margin: 0; /* Remove default margin */
+  font-weight: 800;
+}
+
+#top-left-icon {
+  width: 20%;
+}
+
+.search-container {
+  justify-content: center;
+  text-align: center;
+  margin-right: 60%;
+  margin-top: 6%;
+}
+
+.search-container p {
+  margin-bottom: 10px;
+}
+
+.search-container input {
+  margin: 0 auto;
+}
+
+#searchquery {
+  width: 50%;
+}
+
+#search-btn {
+  width: 40%;
+  height: 10%;
+}
+#search-btn :hover {
+  color: green;
+}
+
+.filter-container {
+  background-color: rgba(255, 255, 255, 0.25);
+  width: 30%;
+  height: 280px;
+  margin-left: 5%;
+  margin-top: 1%;
+  border-radius: 20px; /* Rounded corners */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+#filter-heading {
+  margin-top: 3%;
+  font-weight: 700;
+}
+
+.filter-inner-container {
+  width: 50%; /* Make sure the inner container spans the entire width */
+  padding: 10px; /* Add padding to create space from the edges */
+  text-align: center;
+}
+
+.results-container {
+  width: 55%;
+  position: fixed; /* Fixed positioning */
+  top: 4%; /* Align to the top of the viewport */
+  right: 3%; /* Align to the right edge of the viewport */
+  height: 92vh; /* Take up 100% of the viewport height */
+  background-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
+}
+.table-container {
+  width: 100%;
+  margin: 0 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 500px;
+}
+.sticky-header th {
+  position: sticky;
+  top: 0;
+  background-color: #f8f9fa; /* Adjust background color as needed */
+  z-index: 1; /* Ensure header stays on top of other content */
+}
+
+.table {
+  margin: auto auto;
+  width: 90%; /* Set the table width to 100% */
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.table th {
+  background-color: #f2f2f2;
+}
+
+.results-heading {
+  margin-top: 3%;
+  text-align: center;
+  font-weight: 700;
+  font-size: 30px;
+}
+
+#delivery-icon {
+  width: 55px;
+  height: auto;
+  margin-top: 25%;
+  margin-left: 12%;
+}
+
+#vendor-icon {
+  width: 40px;
+  height: auto;
+  margin-top: 10%;
+  margin-left: 20%;
+}
+
+.center-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.max-btn-container {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: -5px;
+}
+
+#revert-btn {
+  height: 25px;
+  display: flex;
+  align-items: center;
+}
