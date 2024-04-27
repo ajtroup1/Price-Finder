@@ -48,7 +48,7 @@
   justify-content: center;
   text-align: center;
   margin-right: 60%;
-  margin-top: 6%;
+  margin-top: 4%;
 }
 
 .search-container p {
@@ -134,6 +134,19 @@
 
 .table th {
   background-color: #f2f2f2;
+}
+
+.csv-container{
+  position: fixed;
+  margin-top: -20px;
+  margin-left: 20px;
+}
+
+#csv-btn {
+  margin-top: 10px;
+  height: 25px;
+  display: flex;
+  align-items: center;
 }
 
 .results-heading {

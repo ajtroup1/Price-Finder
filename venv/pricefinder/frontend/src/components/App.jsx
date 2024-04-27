@@ -5,6 +5,7 @@ function App() {
   const [data, setData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [scrolls, setScrolls] = useState(5);
+  const [csvname, setCsvname] = useState("")
   const [filters, setFilters] = useState({
     qualityVendor: false,
     freeDelivery: false,
@@ -57,6 +58,32 @@ function App() {
     }
   };
 
+  const sendToCsv = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/sendtocsv`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sortedResults: sortedResults,
+          csvname: csvname,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      } else {
+        alert("Saved to CSV!")
+      }
+
+      const jsonData = await response.json();
+      fetchData();
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   const handleSearchInputChange = (e) => {
     setSearchQuery(e.target.value);
   };
@@ -64,6 +91,11 @@ function App() {
   const handleSearchFormSubmit = (e) => {
     e.preventDefault();
     getScrape();
+  };
+
+  const handleSubmitCsv = (e) => {
+    e.preventDefault();
+    sendToCsv();
   };
 
   const handleFilterChange = (filterName, isChecked) => {
@@ -76,6 +108,10 @@ function App() {
 
   const handleScrollChange = (e) => {
     setScrolls(e.target.value);
+  };
+
+  const handleCsvnameChange = (e) => {
+    setCsvname(e.target.value);
   };
 
   const handleRevertButtonClick = () => {
@@ -103,31 +139,27 @@ function App() {
     ) {
       return false;
     }
+    if (filters.hasRatings && item.rating.toUpperCase() === "NOT LISTED") {
+      return false;
+    }
     return true;
   });
 
-  const filteredResults = filteredData.map((item) => (
-    <tr key={item.id}>
-      <td>{item.name}</td>
-      <td>{item.price}</td>
-      <td>{item.rating || "-"}</td>
-      <td>
-        <a href={item.link} target="_blank" rel="noopener noreferrer">
-          Link
-        </a>
-      </td>
-      <td>
-        {item.free_delivery ? (
-          <img src="../src/assets/delivery-icon.png" id="delivery-icon" />
-        ) : null}
-      </td>
-      <td>
-        {item.top_quality_vendor ? (
-          <img src="../src/assets/top-quality-icon.png" id="vendor-icon" />
-        ) : null}
-      </td>
-    </tr>
-  ));
+  const sortedResults = filteredData.slice().sort((a, b) => {
+    if (filters.lowestPrice) {
+      return convertPriceToFloat(a.price) - convertPriceToFloat(b.price);
+    }
+    if (filters.highestRatings) {
+      const ratingA =
+        a.rating.toUpperCase() === "NOT LISTED" ? 0 : parseFloat(a.rating);
+      const ratingB =
+        b.rating.toUpperCase() === "NOT LISTED" ? 0 : parseFloat(b.rating);
+
+      return ratingB - ratingA;
+    } else {
+      return a.id - b.id;
+    }
+  });
 
   const resultsTable = () => {
     return (
@@ -143,7 +175,36 @@ function App() {
               <th>Quality Vendor</th>
             </tr>
           </thead>
-          <tbody>{filteredResults}</tbody>
+          <tbody>
+            {sortedResults.map((item) => (
+              <tr key={item.id}>
+                <td>{item.name}</td>
+                <td>{item.price}</td>
+                <td>{item.rating || "-"}</td>
+                <td>
+                  <a href={item.link} target="_blank" rel="noopener noreferrer">
+                    Link
+                  </a>
+                </td>
+                <td>
+                  {item.free_delivery ? (
+                    <img
+                      src="../src/assets/delivery-icon.png"
+                      id="delivery-icon"
+                    />
+                  ) : null}
+                </td>
+                <td>
+                  {item.top_quality_vendor ? (
+                    <img
+                      src="../src/assets/top-quality-icon.png"
+                      id="vendor-icon"
+                    />
+                  ) : null}
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
     );
@@ -257,6 +318,10 @@ function App() {
                 type="checkbox"
                 className="form-check-input"
                 id="has-ratings"
+                checked={filters.hasRatings}
+                onChange={(e) =>
+                  handleFilterChange("hasRatings", e.target.checked)
+                }
               />
               <label
                 className="form-check-label text-light"
@@ -271,7 +336,7 @@ function App() {
               </label>
               <input
                 type="number"
-                class="form-control"
+                className="form-control"
                 id="max-price"
                 style={{ height: "20px" }}
                 value={
@@ -302,6 +367,10 @@ function App() {
                 type="checkbox"
                 className="form-check-input"
                 id="lowest-price"
+                checked={filters.lowestPrice}
+                onChange={(e) =>
+                  handleFilterChange("lowestPrice", e.target.checked)
+                }
               />
               <label
                 className="form-check-label text-light"
@@ -315,6 +384,10 @@ function App() {
                 type="checkbox"
                 className="form-check-input"
                 id="ratings"
+                checked={filters.highestRatings}
+                onChange={(e) => {
+                  handleFilterChange("highestRatings", e.target.checked);
+                }}
               />
               <label className="form-check-label text-light" htmlFor="ratings">
                 Highest ratings
@@ -330,7 +403,7 @@ function App() {
               </label>
               <input
                 type="number"
-                class="form-control"
+                className="form-control"
                 id="max-price"
                 style={{ height: "20px" }}
                 value={scrolls}
@@ -342,7 +415,26 @@ function App() {
       </div>
       <div className="results-container">
         <div>
-          <p className="results-heading">Results ({data.length})</p>
+          <form onSubmit={handleSubmitCsv}>
+            <div className="mb-3 csv-container">
+              <label htmlFor="max-price" className="form-label text-light">
+                CSV Name (don't include .csv)
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="max-price"
+                style={{ height: "20px", width: "150px" }}
+                value={csvname}
+                onChange={handleCsvnameChange}
+                autoComplete="off"
+              />
+              <button className="btn btn-success" id="csv-btn">
+                Save to CSV
+              </button>
+            </div>
+          </form>
+          <p className="results-heading">Results ({sortedResults.length})</p>
           {resultsTable()}
         </div>
       </div>
